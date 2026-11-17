@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Практична робота 3.5. Захисти себе</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff8e1;--card:#fff;--ink:#14223b;--mute:#52617c;--blue:#0f6cbd;--yel:#ffc400;--line:#e3d7ae;--ok:#1c7c3f;--okb:#dff5e5;--mid:#8a5a00;--midb:#fff0c2;--no:#b3261e;--nob:#fde3e1;--chip:#eaf3fc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10182a;--card:#18233a;--ink:#f1f4fb;--mute:#a7b3cc;--blue:#6db4ff;--line:#2d3c5c;--ok:#7be0a0;--okb:#143323;--mid:#ffd36b;--midb:#3a2e0b;--no:#ff9a92;--nob:#40181a;--chip:#1e2f4d}}
+:root[data-theme="dark"]{--bg:#10182a;--card:#18233a;--ink:#f1f4fb;--mute:#a7b3cc;--blue:#6db4ff;--line:#2d3c5c;--ok:#7be0a0;--okb:#143323;--mid:#ffd36b;--midb:#3a2e0b;--no:#ff9a92;--nob:#40181a;--chip:#1e2f4d}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Rubik,system-ui,sans-serif}
+header{background:var(--yel);color:#14223b;padding:22px 16px 18px}
+.w{max-width:760px;margin:0 auto}
+h1{margin:0;font-size:clamp(24px,5vw,34px);line-height:1.15}
+header p{margin:6px 0 0;max-width:60ch}
+.who{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+input[type=text]{font:inherit;padding:8px 12px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);min-width:0}
+.who input{flex:1 1 220px;border-color:#14223b}
+.score{position:sticky;top:0;z-index:5;background:var(--blue);color:#fff;padding:8px 16px;padding-top:calc(8px + env(safe-area-inset-top,0px))}
+.score .w{display:flex;align-items:center;gap:12px}
+.score b{font-size:20px;white-space:nowrap}
+.trk{flex:1;height:8px;background:rgba(255,255,255,.3);border-radius:8px;overflow:hidden}
+#bar{height:100%;width:0;background:var(--yel);transition:width .4s}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--blue);z-index:6}
+main{padding:20px 16px 48px}
+section{background:var(--card);border:2px solid var(--line);border-left-width:10px;border-radius:14px;padding:16px 18px;margin:0 0 18px}
+.e{border-left-color:#2e9e57}.m{border-left-color:var(--yel)}.h{border-left-color:#d6423a}
+h2{margin:0 0 4px;font-size:20px}
+.tag{display:inline-block;font-size:13px;font-weight:500;background:var(--chip);color:var(--blue);padding:2px 10px;border-radius:20px;margin-bottom:6px}
+.hint{color:var(--mute);margin:0 0 10px;font-size:15px}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:8px 0;border-top:1px solid var(--line)}
+.row>span{flex:1 1 220px}
+label{cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+input[type=radio]{accent-color:var(--blue);width:18px;height:18px}
+select{font:inherit;padding:6px 8px;border-radius:8px;border:2px solid var(--line);background:var(--card);color:var(--ink);max-width:100%}
+button{font:inherit;font-weight:500;cursor:pointer;border:0;border-radius:10px;padding:9px 18px;background:var(--blue);color:#fff}
+button:disabled,select:disabled{opacity:.6;cursor:default}
+button.alt{background:var(--chip);color:var(--blue)}
+:focus-visible{outline:3px solid var(--yel);outline-offset:2px}
+.q{padding:8px 0;border-top:1px solid var(--line)}.q p{margin:0 0 4px;font-weight:500}.q label{display:flex;padding:2px 0}
+.crit{list-style:none;padding:0;margin:8px 0;display:grid;gap:2px}
+.crit li::before{content:"○ ";color:var(--mute)}.crit li.y{color:var(--ok)}.crit li.y::before{content:"● ";color:var(--ok)}
+.msg{border:2px dashed var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:6px}
+.frag{text-align:left;background:var(--chip);color:var(--ink);font-weight:400;padding:8px 12px}
+.frag.sel{background:var(--yel);color:#14223b;font-weight:500}
+.frag.good{background:var(--okb);color:var(--ok)}.frag.bad{background:var(--nob);color:var(--no)}
+.fb{margin-top:10px;border-radius:10px;padding:8px 12px;font-weight:500}.fb:empty{display:none}
+.fb.ok{background:var(--okb);color:var(--ok)}.fb.mid{background:var(--midb);color:var(--mid)}.fb.no{background:var(--nob);color:var(--no)}
+textarea{width:100%;font:inherit;border:2px solid var(--line);border-radius:10px;padding:8px 12px;background:var(--card);color:var(--ink);min-height:80px}
+#res{display:none;text-align:center;border-color:var(--yel);border-left-width:2px}
+#res .big{font-size:56px;font-weight:700;line-height:1.1;color:var(--blue)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="w">
+<h1>Практична робота 3.5. Захисти себе</h1>
+<p>Поведження в цифровому просторі, 6 клас. П’ять завдань від легкого до складного, разом 12 балів.</p>
+<div class="who"><input type="text" id="name" placeholder="Ім’я та прізвище" aria-label="Ім’я та прізвище"><input type="text" id="cls" placeholder="Клас" aria-label="Клас" style="flex:0 1 100px"></div>
+</div></header>
+<div class="score"><div class="w"><b>Бали: <span id="tot">0</span> / 12</b><div class="trk"><div id="bar"></div></div></div></div>
+<main><div class="w">
+
+<section class="e" id="t0"><span class="tag">Легко · до 2 балів</span>
+<h2>1. Приватне чи публічне?</h2>
+<p class="hint">Познач, які дані є особистими й конфіденційними, а які можна розповідати всім. 6 правильних відповідей — 2 бали, 4–5 — 1 бал.</p>
+<div id="b0"></div><button onclick="c0()">Перевірити</button><div class="fb" id="f0"></div></section>
+
+<section class="e" id="t1"><span class="tag">Легко · до 2 балів</span>
+<h2>2. Установи відповідність</h2>
+<p class="hint">До кожного виду інформації добери групу. 8 правильних — 2 бали, 6–7 — 1 бал.</p>
+<div id="b1"></div><button onclick="c1()">Перевірити</button><div class="fb" id="f1"></div></section>
+
+<section class="m" id="t2"><span class="tag">Середньо · до 3 балів</span>
+<h2>3. Що робити в ситуації?</h2>
+<p class="hint">Кожна правильна відповідь — 1 бал.</p>
+<div id="b2"></div><button onclick="c2()">Перевірити</button><div class="fb" id="f2"></div></section>
+
+<section class="m" id="t3"><span class="tag">Середньо · до 2 балів</span>
+<h2>4. Створи надійний пароль</h2>
+<p class="hint">Придумай пароль для вигаданого акаунта (справжній пароль не вводь!). Виконано 5 вимог — 2 бали, 4 вимоги — 1 бал.</p>
+<input type="text" id="pw" placeholder="Твій пароль" autocomplete="off" oninput="pwc()" style="width:100%">
+<ul class="crit" id="cr"></ul>
+<button onclick="c3()">Перевірити</button><div class="fb" id="f3"></div></section>
+
+<section class="h" id="t4"><span class="tag">Складно · до 3 балів</span>
+<h2>5. Знайди підступ у повідомленні</h2>
+<p class="hint">Це лист від незнайомця. Натисни на частини, які виглядають підозріло (їх кілька). Обережно: зайві позначки знижують бал.</p>
+<div class="msg" id="b4"></div>
+<p class="hint" style="margin-top:12px">Творче завдання (необов’язково, оцінює вчитель): чому не слід надавати особисту інформацію незнайомцям або невідомим сайтам?</p>
+<textarea id="open" aria-label="Відповідь"></textarea>
+<div style="margin-top:10px"><button onclick="c4()">Перевірити</button></div><div class="fb" id="f4"></div></section>
+
+<section id="res"><h2>Твій результат</h2><div class="big"><span id="rt">0</span> / 12</div>
+<p id="rm"></p><button onclick="cp()">Скопіювати результат для вчителя</button> <button class="alt" onclick="location.reload()">Почати знову</button><p class="hint" id="cpm"></p></section>
+</div></main>
+<script>
+const $=s=>document.querySelector(s),MAX=[2,2,3,2,3],S=[null,null,null,null,null];
+function upd(){const t=S.reduce((a,b)=>a+(b||0),0),n=S.filter(x=>x!==null).length;$('#tot').textContent=t;$('#bar').style.width=n*20+'%';if(n==5){$('#rt').textContent=t;$('#rm').textContent=t>=10?'Чудово! Ти вмієш захищати себе в інтернеті.':t>=7?'Добре! Повтори теми, де були помилки.':t>=4?'Непогано, але варто повторити правила безпеки.':'Перечитай матеріал і спробуй ще раз.';$('#res').style.display='block';$('#res').scrollIntoView({behavior:'smooth'})}}
+function fin(i,p,m){S[i]=p;const f=$('#f'+i);f.className='fb '+(p==MAX[i]?'ok':p?'mid':'no');f.textContent=p+' з '+MAX[i]+' б. '+m;document.querySelectorAll('#t'+i+' button,#t'+i+' input,#t'+i+' select,#t'+i+' textarea').forEach(e=>e.disabled=true);upd()}
+// 1
+const A=[["Домашня адреса",1],["Улюблений колір",0],["Номер банківської картки",1],["Пароль від акаунта",1],["Назва столиці України",0],["Номер телефону",1]];
+$('#b0').innerHTML=A.map((a,k)=>`<div class="row"><span>${a[0]}</span><label><input type="radio" name="a${k}" value="1">Приватне</label><label><input type="radio" name="a${k}" value="0">Публічне</label></div>`).join('');
+function c0(){let n=0;A.forEach((a,k)=>{const r=document.querySelector(`input[name=a${k}]:checked`);if(r&&+r.value==a[1])n++});fin(0,n==6?2:n>=4?1:0,'Правильно: '+n+' з 6. Приватні: адреса, картка, пароль, телефон.')}
+// 2
+const C=["Особисті дані","Захищене авторським правом","Відкрита інформація"],B=[["Расове або етнічне походження",0],["Членство в профспілці",0],["Стан здоров’я людини",0],["Роман або вірш",1],["Пісня в форматі MP3",1],["Мультфільм або відео",1],["Прогноз погоди на сьогодні",2],["Розклад уроків на сайті школи",2]];
+$('#b1').innerHTML=B.map((b,k)=>`<div class="row"><span>${b[0]}</span><select id="s${k}" aria-label="${b[0]}"><option value="">— обери —</option>${C.map((c,j)=>`<option value="${j}">${c}</option>`).join('')}</select></div>`).join('');
+function c1(){let n=0;B.forEach((b,k)=>{if($('#s'+k).value===''+b[1])n++});fin(1,n==8?2:n>=6?1:0,'Правильно: '+n+' з 8.')}
+// 3
+const Q=[["Незнайомець у грі просить твою адресу та номер школи, щоб надіслати «подарунок». Що робити?",["Надіслати, адже подарунок — це приємно","Не відповідати, заблокувати його й розповісти дорослим","Дати лише номер школи"],1],["Який пароль найнадійніший?",["12345678","Kyiv2015","Pt7!gR2$kLm"],2],["Ти знайшов у мережі чужу пісню й хочеш викласти її у своєму блозі. Як правильно?",["Можна, якщо вона є в інтернеті","Не можна без дозволу автора: це порушення авторського права","Можна, якщо змінити назву"],1]];
+$('#b2').innerHTML=Q.map((q,k)=>`<div class="q"><p>${q[0]}</p>${q[1].map((o,j)=>`<label><input type="radio" name="q${k}" value="${j}">${o}</label>`).join('')}</div>`).join('');
+function c2(){let n=0;Q.forEach((q,k)=>{const r=document.querySelector(`input[name=q${k}]:checked`);if(r&&+r.value==q[2])n++});fin(2,n,'Правильних відповідей: '+n+' з 3.')}
+// 4
+const R=[["Щонайменше 8 символів",v=>v.length>=8],["Є велика літера",v=>/[A-ZА-ЯІЇЄҐ]/.test(v)],["Є цифра",v=>/\d/.test(v)],["Є спецсимвол (! ? # $ % тощо)",v=>/[^\wА-Яа-яІіЇїЄєҐґ\s]/.test(v)],["Немає простих слів (password, qwerty, 12345, пароль)",v=>v.length>0&&!/password|qwerty|12345|пароль|admin/i.test(v)]];
+function pwc(){const v=$('#pw').value;$('#cr').innerHTML=R.map(r=>`<li class="${r[1](v)?'y':''}">${r[0]}</li>`).join('')}pwc();
+function c3(){const n=R.filter(r=>r[1]($('#pw').value)).length;fin(3,n==5?2:n==4?1:0,'Виконано вимог: '+n+' з 5.')}
+// 5
+const F=[["Від: prize-center@gmail-promo.xyz",1],["Вітаємо! Ви виграли новий смартфон, хоча ніколи не брали участі в розіграші.",1],["Щоб отримати приз, надішліть номер банківської картки батьків та код із SMS.",1],["Поспішайте: пропозиція діє лише 10 хвилин!",1],["Це повідомлення створено автоматично.",0],["Якщо виникли питання, зверніться до батьків або вчителя.",0]];
+$('#b4').innerHTML=F.map((f,k)=>`<button class="frag" id="g${k}" onclick="this.classList.toggle('sel')">${f[0]}</button>`).join('');
+function c4(){let ok=0,bad=0;F.forEach((f,k)=>{const b=$('#g'+k),s=b.classList.contains('sel');if(s&&f[1])ok++;if(s&&!f[1])bad++;b.classList.remove('sel');if(f[1])b.classList.add('good');else if(s)b.classList.add('bad')});const net=ok-bad;fin(4,net>=4?3:net==3?2:net>=2?1:0,'Знайдено підступів: '+ok+' з 4, зайвих позначок: '+bad+'. Зелені — ознаки шахрайства: підроблена адреса, «виграш», запит даних картки, поспіх.')}
+function cp(){const t=`Практична робота 3.5. ${$('#name').value||'—'}, ${$('#cls').value||'—'} клас. Результат: ${$('#rt').textContent}/12. За завданнями: ${S.join(' + ')}. Творча відповідь: ${$('#open').value||'—'}`;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>$('#cpm').textContent='Скопійовано. Надішліть вчителю.').catch(()=>{$('#cpm').textContent=t})}
+</script>
+</body>
+</html>
